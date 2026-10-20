@@ -1,4 +1,4 @@
-# 🎓 College Helpdesk Bot
+#  College Helpdesk Bot
 
 Ask questions about college information and get answers grounded in the project’s PDF knowledge base, with the relevant source pages available to check.
 
