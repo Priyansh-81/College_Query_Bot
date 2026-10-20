@@ -4,7 +4,7 @@ from app.rag.query import Rag
 
 rag_pipeline = Rag()
 
-question ="What are the eligibility requirements for undergraduate admissions at MAHE?"
+question ="How to reach MAHE?"
 
 
 result = rag_pipeline.generate_response(question)
