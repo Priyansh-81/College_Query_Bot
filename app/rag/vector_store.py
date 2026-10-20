@@ -9,7 +9,11 @@ from app.config import (
 
 
 class VectorStore:
-    def __init__(self,persist_directory: str = str(chroma_dir),collection_name: str = default_collection_name,):
+    def __init__(
+        self,
+        persist_directory: str = str(chroma_dir),
+        collection_name: str = default_collection_name,
+    ):
         self.client = chromadb.PersistentClient(
             path=str(persist_directory),
             settings=chromadb.config.Settings(
@@ -27,6 +31,7 @@ class VectorStore:
         chunks: list[str],
         embeddings: list[list[float]],
         ids: list[str] | None = None,
+        metadatas: list[dict] | None = None,
     ) -> None:
         if not chunks:
             return
@@ -61,13 +66,30 @@ class VectorStore:
                 "Number of IDs must match the number of chunks."
             )
 
+        if metadatas is not None:
+            if len(metadatas) != len(chunks):
+                raise ValueError(
+                    "Number of metadata entries must match the number of chunks."
+                )
+
+            for metadata in metadatas:
+                if not metadata:
+                    raise ValueError(
+                        "Metadata entries must not be empty."
+                    )
+
         self.collection.upsert(
             ids=ids,
             documents=chunks,
             embeddings=embeddings,
+            metadatas=metadatas,
         )
 
-    def search(self,query_embedding: list[float],n_results: int = top_k,) -> list[dict]:
+    def search(
+        self,
+        query_embedding: list[float],
+        n_results: int = top_k,
+    ) -> list[dict]:
         if not query_embedding:
             raise ValueError("Query embedding must not be empty.")
 
@@ -82,7 +104,7 @@ class VectorStore:
         results = self.collection.query(
             query_embeddings=[query_embedding],
             n_results=min(n_results, count),
-            include=["documents", "distances"],
+            include=["documents", "distances", "metadatas"],
         )
 
         matches = []
@@ -93,6 +115,7 @@ class VectorStore:
                     "id": results["ids"][0][index],
                     "text": document,
                     "distance": results["distances"][0][index],
+                    "metadata": results["metadatas"][0][index],
                 }
             )
 

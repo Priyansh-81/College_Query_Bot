@@ -56,6 +56,7 @@ Answer:
                     "id": chunk["id"],
                     "text": chunk["text"],
                     "distance": chunk["distance"],
+                    "metadata": chunk.get("metadata", {}),
                 }
                 for chunk in relevant_chunks
             ],

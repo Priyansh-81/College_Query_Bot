@@ -15,6 +15,7 @@ print("Retrieved Chunks:")
 for i,result in enumerate(results, start=1):
     print(f"--- Result {i} ---")
     print(f"ID: {result['id']}")
+    print(f"Metadata: {result.get('metadata', {})}")
     print(f"Distance: {result['distance']:.4f}")
     print(result["text"][:700])
     print()
